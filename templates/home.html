@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Spotify Recommender</title>
+    <link rel="stylesheet" href="https://unpkg.com/picnic" />
+</head>
+
+<body>
+    <div style="width:60%; margin: 0 auto;">
+        <a href="/">
+            <h1>{{message}}</h1>
+        </a>
+        <p>Please enter a song title below to see 5 recommended songs.</p>
+        <form action="/recommend" method="post">
+            <input type="text" name="song_title" placeholder="Song Title">
+            <input type="submit" value="GO!" style="margin: 40 auto;">
+        </form>
+    </div>
+</body>
+
+</html>

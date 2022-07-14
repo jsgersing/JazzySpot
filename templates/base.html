@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Spotify Recommender</title>
+    <link rel="stylesheet" href="https://unpkg.com/picnic" />
+</head>
+
+<body>
+    <div style="width:60%; margin: 0 auto;">
+        <a href="/">
+            <h1>{{message}}</h1>
+        </a>
+        <p>Please enter an artist below to see 5 recommended artists.</p>
+        <form action="/recommend" method="post">
+<!--            <input type="text" name="song_title" placeholder="Song Title">-->
+            <input type="text" name="artist_name" placeholder="Artist">
+            <input type="submit" value="GO!" style="margin: 40 auto;">
+        </form>
+        {% if recommendations %}
+        <h3>Recommendations: </h3>
+        {% endif %}
+        {% for recommendation in recommendations %}
+        <div style="background-color:#EEE; padding:0 10px; border-radius:5px; margin:10px;">
+            <p style="margin:0;">Artist: {{ recommendation[0] }}</p>
+            <a href="{{recommendation[1]}}", style="margin:0;">{{ recommendation[1] }} </a>
+        </div>
+        {% endfor %}
+
+    </div>
+</body>
+
+</html>
