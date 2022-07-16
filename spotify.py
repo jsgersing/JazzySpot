@@ -4,7 +4,6 @@ from spotipy import SpotifyClientCredentials
 from os import getenv
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
-from flask import Flask
 
 load_dotenv()
 client_credentials_manager = SpotifyClientCredentials(
@@ -12,15 +11,7 @@ client_credentials_manager = SpotifyClientCredentials(
                                 client_secret=getenv("SECRET"))
 sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
-load_dotenv()
-APP = Flask(__name__)
-
-APP.config['SQLALCHEMY_DATABASE_URI'] = getenv('DATABASE_URI')
-APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 DB = SQLAlchemy()
-DB.init_app(APP)
-APP.app_context().push()
 
 
 class Artists(DB.Model):
@@ -46,7 +37,7 @@ def gather_artist_recs(artist):
     searched_artist_id = artists[0]['id']
     searched_artist_name = artists[0]['name']
     track_id = [item['id'] for item in item]
-    artist_recommendations = [sp.recommendations(seed_artists=[searched_artist_id]) for item in track_id]
+    artist_recommendations = [sp.recommendations(seed_artists=[searched_artist_id]) for _ in track_id]
     artist_id = \
         [artist_recommendations[i]['tracks'][0]['album']['artists'][0]['id']
          for i, _ in enumerate(artist_recommendations)]
@@ -76,27 +67,3 @@ def gather_artist_recs(artist):
                 output.append(item)
                 break
     return output
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
