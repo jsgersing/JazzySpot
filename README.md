@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This repository contains the files for a Flask App with U/I that takes user imput of an muscial artist's name and returns five recommended artists' names and Spotify URLs using data gathered through Spotify's API. 
+This repository contains the files for a Flask App with U/I that takes user input of an musical artist's name and returns five recommended artists' names and Spotify URLs using data gathered through Spotify's API. 
 
 ### Future Plans
 
