@@ -37,6 +37,7 @@ def gather_artist_recs(artist):
     searched_artist_id = artists[0]['id']
     searched_artist_name = artists[0]['name']
     track_id = [item['id'] for item in item]
+    print(track_id)
     artist_recommendations = [sp.recommendations(seed_artists=[searched_artist_id]) for _ in track_id]
     artist_id = \
         [artist_recommendations[i]['tracks'][0]['album']['artists'][0]['id']
