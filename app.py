@@ -1,29 +1,24 @@
 from flask import Flask, render_template, request
-from spotify import DB, Artists
 from spotify import gather_artist_recs
-from os import getenv
 from dotenv import load_dotenv
+from mongo_interface_component import MongoDB
 
 load_dotenv()
 APP = Flask(__name__)
 
-APP.config['SQLALCHEMY_DATABASE_URI'] = getenv('DATABASE_URI')
-APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-DB.init_app(APP)
-APP.app_context().push()
+db = MongoDB("jazzy_spot")
+artists = db.read("artists")
 
 
 @APP.route("/")
 def home():
-    songs = Artists.query.all()
-    return render_template('home.html', message='Spotify Recommender', song=songs)
+    # songs = Artists.query.all()
+    return render_template('home.html', message='Spotify Recommender')
 
 
 @APP.route('/reset')
 def reset():
-    DB.drop_all()
-    DB.create_all()
+    db.delete("artists", {})
     return render_template('base.html', message='Reset DB')
 
 

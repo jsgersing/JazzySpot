@@ -2,8 +2,8 @@ import random
 import spotipy
 from spotipy import SpotifyClientCredentials
 from os import getenv
-from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
+from mongo_interface_component import MongoDB
 
 load_dotenv()
 client_credentials_manager = SpotifyClientCredentials(
@@ -11,21 +11,8 @@ client_credentials_manager = SpotifyClientCredentials(
                                 client_secret=getenv("SECRET"))
 sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
-DB = SQLAlchemy()
 
-
-class Artists(DB.Model):
-    artist_id = DB.Column(DB.String(), primary_key=True)
-    artist_name = DB.Column(DB.String(), nullable=True)
-    album_url = DB.Column(DB.String(), nullable=True)
-
-    def __init__(self, artist_id, artist_name, album_url):
-        self.artist_id = artist_id
-        self.artist_name = artist_name
-        self.album_url = album_url
-
-    def __repr__(self):
-        return f"<Track: {self.artist_name}>"
+db = MongoDB("jazzy_spot")
 
 
 def gather_artist_recs(artist):
@@ -52,13 +39,16 @@ def gather_artist_recs(artist):
         a_id = lst[0]
         a_name = lst[1]
         al_url = lst[2]
-        lst = Artists(artist_id=a_id, artist_name=a_name, album_url=al_url)
-        db_list = Artists.query.filter(Artists.artist_id == lst.artist_id).all()
+        my_dict = {'artist_id': a_id, "artist_name": a_name, "album_url": al_url}
+        # lst = Artists(artist_id=a_id, artist_name=a_name, album_url=al_url)
+        db_list = db.read("artists", {"artist_id": my_dict.get("artist_id")})
+        # db_list = Artists.query.filter(Artists.artist_id == lst.artist_id).all()
         if db_list:
             pass
         else:
-            DB.session.add(lst)
-            DB.session.commit()
+            db.create("artists", my_dict)
+            # DB.session.add(lst)
+            # DB.session.commit()
     combined = [list(a) for a in zip(artist_name, album_urls) if list(a)[0] not in searched_artist_name]
     sample = random.sample(combined, 10)
     output = []
