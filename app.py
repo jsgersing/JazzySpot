@@ -11,8 +11,8 @@ db = MongoDB("jazzy_spot")
 
 @APP.route("/")
 def home():
-    artists = db.read("artists")
-    return render_template('home.html', message='Spotify Recommender', artist=artists)
+    # artists = db.read("artists")
+    return render_template('home.html', message='Spotify Recommender')
 
 
 @APP.route('/reset')
