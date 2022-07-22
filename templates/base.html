@@ -12,8 +12,9 @@
         </a>
         <p>Please enter an artist below to see 5 recommended artists.</p>
         <form action="/recommend" method="post">
-<!--            <input type="text" name="song_title" placeholder="Song Title">-->
-            <input type="text" name="artist_name" placeholder="Artist">
+            <label>
+                <input type="text" name="artist_name" placeholder="Artist">
+            </label>
             <input type="submit" value="GO!" style="margin: 40 auto;">
         </form>
         {% if recommendations %}
@@ -22,7 +23,7 @@
         {% for recommendation in recommendations %}
         <div style="background-color:#EEE; padding:0 10px; border-radius:5px; margin:10px;">
             <p style="margin:0;">Artist: {{ recommendation[0] }}</p>
-            <a href="{{recommendation[1]}}", style="margin:0;">{{ recommendation[1] }} </a>
+            <a href="{{ recommendation[1] }}", style="margin:0;">{{ recommendation[1] }} </a>
         </div>
         {% endfor %}
 
