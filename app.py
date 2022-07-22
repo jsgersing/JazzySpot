@@ -7,13 +7,12 @@ load_dotenv()
 APP = Flask(__name__)
 
 db = MongoDB("jazzy_spot")
-artists = db.read("artists")
 
 
 @APP.route("/")
 def home():
-    # songs = Artists.query.all()
-    return render_template('home.html', message='Spotify Recommender')
+    artists = db.read("artists")
+    return render_template('home.html', message='Spotify Recommender', artist=artists)
 
 
 @APP.route('/reset')

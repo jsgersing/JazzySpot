@@ -40,15 +40,11 @@ def gather_artist_recs(artist):
         a_name = lst[1]
         al_url = lst[2]
         my_dict = {'artist_id': a_id, "artist_name": a_name, "album_url": al_url}
-        # lst = Artists(artist_id=a_id, artist_name=a_name, album_url=al_url)
         db_list = db.read("artists", {"artist_id": my_dict.get("artist_id")})
-        # db_list = Artists.query.filter(Artists.artist_id == lst.artist_id).all()
         if db_list:
             pass
         else:
             db.create("artists", my_dict)
-            # DB.session.add(lst)
-            # DB.session.commit()
     combined = [list(a) for a in zip(artist_name, album_urls) if list(a)[0] not in searched_artist_name]
     sample = random.sample(combined, 10)
     output = []
