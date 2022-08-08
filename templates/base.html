@@ -10,10 +10,10 @@
         <a href="/">
             <h1>{{message}}</h1>
         </a>
-        <p>Please enter an artist below to see 5 recommended artists.</p>
+        <p>Please enter a song title below to see 5 recommended songs, artists, and URLs.</p>
         <form action="/recommend" method="post">
             <label>
-                <input type="text" name="artist_name" placeholder="Artist">
+                <input type="text" name="song_title" placeholder="Song">
             </label>
             <input type="submit" value="GO!" style="margin: 40 auto;">
         </form>
@@ -22,8 +22,9 @@
         {% endif %}
         {% for recommendation in recommendations %}
         <div style="background-color:#EEE; padding:0 10px; border-radius:5px; margin:10px;">
-            <p style="margin:0;">Artist: {{ recommendation[0] }}</p>
-            <a href="{{ recommendation[1] }}", style="margin:0;">{{ recommendation[1] }} </a>
+            <p style="margin:0;">Song: {{ recommendation[0] }}</p>
+            <p style="margin:0;">Artist: {{ recommendation[1] }}</p>
+            <a href="{{ recommendation[2] }}", style="margin:0;">{{ recommendation[2] }} </a>
         </div>
         {% endfor %}
 
