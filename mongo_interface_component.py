@@ -36,6 +36,10 @@ class MongoDB:
             update={"$set": update_data},
         ).acknowledged
 
+    def add_field(self, collection: str, query: Dict):
+        return self.connect(collection).update_many(
+            {}, {"$set": {"new_field": 1}})
+
     def delete(self, collection: str, query: Dict) -> bool:
         return self.connect(collection).delete_many(
             filter=query,
