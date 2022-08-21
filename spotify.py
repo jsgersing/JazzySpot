@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import datetime
+from typing import List
 
 import pandas as pd
 from numpy.testing import verbose
@@ -23,13 +24,13 @@ sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 db = MongoDB("jazzy_spot")
 
 
-def retrieve_track_name(uri):
+def retrieve_track_name(uri: str) -> str:
     track_found = sp.track(uri)
     track_name = track_found['name']
     return track_name
 
 
-def gather_artist_recs(artist):
+def gather_artist_recs(artist: str) -> List[list]:
     artist_results = sp.search(q=f'artist: {artist}', limit=20)
     items = artist_results['tracks']['items']
     item = [item for item in items]
@@ -70,7 +71,7 @@ def gather_artist_recs(artist):
     return output
 
 
-def extract_tracks_features(uris):
+def extract_tracks_features(uris: List[str]) -> List[dict]:
     # track_uris = [uri for uri in uris]
     tracks_features = []
     for track_uri in uris:
@@ -117,7 +118,7 @@ gstats = {"errors": 0}
 verbose = False
 
 
-def process_mpd(path):
+def process_mpd(path: str) -> tuple:
     count = 0
     tuples = []
     my_dict = {}
@@ -151,13 +152,13 @@ def process_mpd(path):
 # print(features[0])
 
 
-def retrieve_track_uri(track):
+def retrieve_track_uri(track: str) -> str:
     track_found = sp.search(q=f'track: {track}', limit=1)
     track_uri = track_found['tracks']['items'][0]['uri']
     return track_uri
 
 
-def create_recommender_model(song):
+def create_recommender_model(song: str) -> List[str]:
     df = pd.DataFrame(db.read("all_features", {'popularity': {'$gt': 30}}))
     print(df.head())
     df = df.drop_duplicates(subset='track_uri')
@@ -265,21 +266,51 @@ def get_artists_from_all_features():
     return artists
 
 
-def extract_artist_id_from_all_features(artists):
+def extract_artist_id_from_all_features(artists: List[str]) -> List[str]:
     search_results = [sp.search(q=f'artist: {artist}', limit=1) for artist in artists]
     track_items = [result['tracks']['items'] for result in search_results]
-    artist_id = [album[0]['artists'][0]['id'] for album in track_items]
-    return artist_id
+    if not track_items:
+        return []
+    else:
+        artist_id = [album[0]['artists'][0]['id'] for album in track_items]
+        return artist_id
 
 
-def extract_genres_from_artist_id(ids):
-    genres = [sp.artist(id)['genres'] for id in ids]
-    return genres
+def extract_genres_from_artist_id(ids: List[str]) -> List[str]:
+    if ids:
+        genres = [sp.artist(id)['genres'] for id in ids]
+        return genres
+    else:
+        return []
 
 
-artists = get_artists_from_all_features()
-ids = extract_artist_id_from_all_features(artists[:2])
-genres = extract_genres_from_artist_id(ids)
-for genre in genres:
-    db.update('all_features', {}, {'genres': genre})
+# artists = get_artists_from_all_features()
+# ids = extract_artist_id_from_all_features(artists[:2])
+# genres = extract_genres_from_artist_id(ids)
+# for genre in genres:
+#     db.update('all_features', {}, {'genres': genre})
 
+artist_name_dicts = db.read('all_features', {}, projection={'_id': False, 'artist_name': True})[29500:30000]
+name = list(map(lambda a: a['artist_name'], artist_name_dicts))
+id = extract_artist_id_from_all_features(name)
+genres = extract_genres_from_artist_id(id)
+genres_dict = list(map(lambda a, b, c: {'genres': a, 'name': b, 'id': c}, genres, name, id))
+db.create_many('genres', genres_dict)
+print(genres_dict)
+
+# def extract_name_input_genres():
+#     artist_name_dicts = db.read('all_features', {}, projection={'_id': False, 'artist_name': True})
+#     name = list(map(lambda a: a['artist_name'], artist_name_dicts))
+#     id = extract_artist_id_from_all_features(name)
+#     genres = extract_genres_from_artist_id(id)
+#     genres_dict = list(map(lambda a, b, c: {'genres': a, 'name': b, 'id': c}, genres, name, id))
+#     db.create_many('genres', genres_dict)
+
+
+
+
+
+
+
+
+# print(list(artist_names[0].values()))
