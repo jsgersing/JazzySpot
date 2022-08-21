@@ -24,10 +24,10 @@ class MongoDB:
             documents=map(dict, data),
         ).acknowledged
 
-    def read(self, collection: str, query: Optional[Dict] = None) -> List[Dict]:
+    def read(self, collection: str, query: Optional[Dict] = None, projection: Optional[Dict] = None) -> List[Dict]:
         return list(self.connect(collection).find(
             filter=query,
-            projection={}
+            projection=projection,
         ))
 
     def update(self, collection: str, query: Dict, update_data: Dict) -> bool:
